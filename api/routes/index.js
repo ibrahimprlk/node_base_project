@@ -9,10 +9,6 @@ for (let route of routes) {
   if (route.includes(".js") && route != "index.js") {
 
     const routeModule = require('./' + route);
-
-    console.log(route, typeof routeModule);
-    console.log(routeModule);
-
     router.use(
       "/" + route.replace(".js", ""),
       routeModule
