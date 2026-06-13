@@ -5,6 +5,7 @@ const Categories = require('../db/models/Categories');
 const Response = require('../lib/Response');
 const CustomError = require('../lib/Error');
 const Enum = require('../config/Enum');
+const AuditLogs = require('../db/models/AuditLogs');
 
 router.get('/', async (req, res, next) => {
     try {
@@ -50,11 +51,8 @@ router.post('/add', async (req, res) => {
             is_active: true
         });
 
-        console.log("BEFORE SAVE");
-
         await category.save();
-
-        console.log("AFTER SAVE");
+        await AuditLogs.info(req.user?.email,"Categories","Add",category);
 
         res.json({ ok: true });
 
@@ -87,6 +85,8 @@ router.post('/update', async (req, res) => {
             updates
         );
 
+        await AuditLogs.info(req.user?.email,"Categories","Update",{_id:body._id, ...updates});
+
         if (result.matchedCount === 0) {
             throw new CustomError(
                 Enum.HTTP_CODES.NOT_FOUND,
@@ -113,6 +113,7 @@ router.post('/delete', async (req, res) => {
 
         // await Categories.remove({_id:body._id});
         await Categories.deleteOne({ _id: body._id });
+        AuditLogs.info(req.user?.email,"Categories","Delete",{_id:body._id});
         res.json(Response.successResponse({ success: true }));
     } catch (error) {
         let errorResponse = Response.errorResponse(error);
