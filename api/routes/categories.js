@@ -6,12 +6,11 @@ const Response = require('../lib/Response');
 const CustomError = require('../lib/Error');
 const Enum = require('../config/Enum');
 const AuditLogs = require('../db/models/AuditLogs');
+const logger = require('../lib/logger/loggerClass');
 
 router.get('/', async (req, res, next) => {
     try {
         let categories = await Categories.find({});
-        console.log(categories);
-
         res.json(Response.successResponse(categories));
     } catch (error) {
         let errorResponse = Response.errorResponse(error);
@@ -43,8 +42,6 @@ router.get('/', async (req, res, next) => {
 // })
 
 router.post('/add', async (req, res) => {
-    console.log("REQ BODY:", req.body);
-
     try {
         let category = new Categories({
             name: req.body.name,
@@ -52,18 +49,19 @@ router.post('/add', async (req, res) => {
         });
 
         await category.save();
-        await AuditLogs.info(req.user?.email,"Categories","Add",category);
+        logger.info(req.user?.email, "Categories", "Add",category);
+       // AuditLogs.info(req.user?.email,"Categories","Add",category);
 
         res.json({ ok: true });
 
     } catch (error) {
+        logger.error(req.user?.email, "Categories", "Add",error);
         console.log("SAVE ERROR:", error);
         res.status(500).json(error);
     }
 });
 
 router.post('/update', async (req, res) => {
-    console.log("REQ BODY:", req.body);
     let body = req.body;
     try {
 
@@ -102,7 +100,6 @@ router.post('/update', async (req, res) => {
 });
 
 router.post('/delete', async (req, res) => {
-    console.log("REQ BODY:", req.body);
     let body = req.body;
     try {
 

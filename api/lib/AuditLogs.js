@@ -90,7 +90,7 @@ class AuditLogs {
             log
         });
 
-       // auditLog.save();
+        auditLog.save();
     }
 }
 
