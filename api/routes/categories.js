@@ -13,6 +13,10 @@ const i18n = new (require('../lib/i18n'))(config.DEFAULT_LANG);
 
 const emitter = require("../lib/Emitter");
 
+const excelExport = new (require("../lib/Export"))();
+const path = require("path");
+const fs = require("fs");
+
 router.get('/', async (req, res, next) => {
     try {
         let categories = await Categories.find({});
@@ -122,6 +126,46 @@ router.post('/delete', async (req, res) => {
         await Categories.deleteOne({ _id: body._id });
         AuditLogs.info(req.user?.email, "Categories", "Delete", { _id: body._id });
         res.json(Response.successResponse({ success: true }));
+    } catch (error) {
+        let errorResponse = Response.errorResponse(error);
+        res.status(errorResponse.code).json(errorResponse);
+    }
+});
+
+router.post("/export", async (req, res) => {
+    try {
+        const categories = await Categories.find({});
+
+        const excel = excelExport.toExcel(
+            ["NAME", "IS ACTIVE", "USER ID", "CREATED AT", "UPDATED AT"],
+            ["name", "is_active", "created_by", "created_at", "updated_at"],
+            categories
+        );
+
+        // tmp klasör yolu
+        const dir = path.join(__dirname, "../tmp");
+
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        const filePath = path.join(
+            dir,
+            `categories_excel_${Date.now()}.xlsx`
+        );
+
+        // ❗ UTF-8 YOK (binary yazıyoruz)
+        fs.writeFileSync(filePath, excel);
+
+        res.download(filePath, (err) => {
+            if (err) {
+                console.log(err);
+            }
+
+            // optional cleanup
+            fs.unlinkSync(filePath);
+        });
+
     } catch (error) {
         let errorResponse = Response.errorResponse(error);
         res.status(errorResponse.code).json(errorResponse);
