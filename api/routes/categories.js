@@ -11,6 +11,8 @@ const auth = require('../lib/auth')();
 const config = require("../config")
 const i18n = new (require('../lib/i18n'))(config.DEFAULT_LANG);
 
+const emitter = require("../lib/Emitter");
+
 router.get('/', async (req, res, next) => {
     try {
         let categories = await Categories.find({});
@@ -47,9 +49,9 @@ router.get('/', async (req, res, next) => {
 router.post('/add', async (req, res) => {
     try {
         //i18n.translate("COMMON.VALIDATION_ERROR_TITLE")
-        if (!body.name) {
-            throw new CustomError(Enum.HTTP_CODES.BAD_REQUEST, i18n.translate("COMMON.VALIDATION_ERROR_TITLE",req.user.language), i18n.translate("COMMON.FIELD_MUST_BE_FILLED",req.user.language,["name"]))
-        }
+        // if (!body.name) {
+        //     throw new CustomError(Enum.HTTP_CODES.BAD_REQUEST, i18n.translate("COMMON.VALIDATION_ERROR_TITLE",req.user.language), i18n.translate("COMMON.FIELD_MUST_BE_FILLED",req.user.language,["name"]))
+        // }
         let category = new Categories({
             name: req.body.name,
             is_active: true
@@ -58,6 +60,7 @@ router.post('/add', async (req, res) => {
         await category.save();
         logger.info(req.user?.email, "Categories", "Add", category);
         // AuditLogs.info(req.user?.email,"Categories","Add",category);
+        emitter.getEmitter("notifications").emit("messages",{message: category.name+" is added"});
 
         res.json({ ok: true });
 
