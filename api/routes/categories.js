@@ -7,8 +7,8 @@ const CustomError = require('../lib/Error');
 const Enum = require('../config/Enum');
 const AuditLogs = require('../db/models/AuditLogs');
 const logger = require('../lib/logger/loggerClass');
-
-router.get('/', async (req, res, next) => {
+const auth = require('../lib/auth')();
+router.get('/',  async (req, res, next) => {
     try {
         let categories = await Categories.find({});
         res.json(Response.successResponse(categories));
