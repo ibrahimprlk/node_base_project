@@ -8,7 +8,10 @@ const Enum = require('../config/Enum');
 const AuditLogs = require('../db/models/AuditLogs');
 const logger = require('../lib/logger/loggerClass');
 const auth = require('../lib/auth')();
-router.get('/',  async (req, res, next) => {
+const config = require("../config")
+const i18n = new (require('../lib/i18n'))(config.DEFAULT_LANG);
+
+router.get('/', async (req, res, next) => {
     try {
         let categories = await Categories.find({});
         res.json(Response.successResponse(categories));
@@ -43,19 +46,23 @@ router.get('/',  async (req, res, next) => {
 
 router.post('/add', async (req, res) => {
     try {
+        //i18n.translate("COMMON.VALIDATION_ERROR_TITLE")
+        if (!body.name) {
+            throw new CustomError(Enum.HTTP_CODES.BAD_REQUEST, i18n.translate("COMMON.VALIDATION_ERROR_TITLE",req.user.language), i18n.translate("COMMON.FIELD_MUST_BE_FILLED",req.user.language,["name"]))
+        }
         let category = new Categories({
             name: req.body.name,
             is_active: true
         });
 
         await category.save();
-        logger.info(req.user?.email, "Categories", "Add",category);
-       // AuditLogs.info(req.user?.email,"Categories","Add",category);
+        logger.info(req.user?.email, "Categories", "Add", category);
+        // AuditLogs.info(req.user?.email,"Categories","Add",category);
 
         res.json({ ok: true });
 
     } catch (error) {
-        logger.error(req.user?.email, "Categories", "Add",error);
+        logger.error(req.user?.email, "Categories", "Add", error);
         console.log("SAVE ERROR:", error);
         res.status(500).json(error);
     }
@@ -83,7 +90,7 @@ router.post('/update', async (req, res) => {
             updates
         );
 
-        await AuditLogs.info(req.user?.email,"Categories","Update",{_id:body._id, ...updates});
+        await AuditLogs.info(req.user?.email, "Categories", "Update", { _id: body._id, ...updates });
 
         if (result.matchedCount === 0) {
             throw new CustomError(
@@ -110,7 +117,7 @@ router.post('/delete', async (req, res) => {
 
         // await Categories.remove({_id:body._id});
         await Categories.deleteOne({ _id: body._id });
-        AuditLogs.info(req.user?.email,"Categories","Delete",{_id:body._id});
+        AuditLogs.info(req.user?.email, "Categories", "Delete", { _id: body._id });
         res.json(Response.successResponse({ success: true }));
     } catch (error) {
         let errorResponse = Response.errorResponse(error);

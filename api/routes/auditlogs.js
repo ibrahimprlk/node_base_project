@@ -40,7 +40,7 @@ router.post('/', auth.checkRoles("auditlogs_view"), async (req, res) => {
     let auditLogs = await AuditLogs.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
     res.json(Response.successResponse(auditLogs));
   } catch (error) {
-    let errorResponse = Response.errorResponse(error);
+    let errorResponse = Response.errorResponse(error,req.user?.language);
     res.status(errorResponse.code).json(error);
   }
 });

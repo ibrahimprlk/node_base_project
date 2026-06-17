@@ -1,0 +1,41 @@
+module.exports = {
+    "COMMON":{
+         "VALIDATION_ERROR_TITLE": "Hata!",
+         "VALIDATION_ERROR_INFO": "Hatalı veri gönderildi",
+         "ALREADY_EXISTS": "Halihazırda",
+         "UNKNOWN_ERROR": "Bilinmeyen",
+         "FIELD_MUST_BE_FILLED":"{} bu alan boş olamaz"
+    }
+    // USERS: {
+    //     VALIDATION_ERROR_TITLE: "Hata!",
+    //     VALIDATION_ERROR_INFO: "Hatalı veri gönderildi",
+    //     PASSWORD_LENGTH_ERROR: "Şifre en az 8 karakterden oluşmalıdır.",
+    //     ROLE_MUST_ERROR: "En az bir tane rol seçilmelidir.",
+    //     EMAIL_VALIDATION_ERROR: "Lütfen geçerli bir email adresi giriniz.",
+    //     USER_NOT_FOUND: "Kullanıcı bulunamadı."
+    // },
+    // ROLES: {
+    //     PERMISSION_VALIDATION_ERROR: "Lütfen en az bir yetki seçiniz."
+    // },
+    // COMMON: {
+    //     VALIDATION_ERROR_TITLE: "Hata!",
+    //     VALIDATION_ERROR_INFO: "Hatalı veri gönderildi",
+    //     ALREADY_EXISTS: "Halihazırda",
+    //     UNKNOWN_ERROR: "Bilinmeyen",
+    //     FIELD_MUST_BE_FILLED:"{} bu alan boş olamaz"
+    // },
+    // AUTH: {
+    //     NEED_PERMISSION_TITLE: "Yetki Gerekli",
+    //     NEED_PERMISSION_INFO: "Erişim için yetkiniz yok."
+    // },
+    // LOGS: {
+    //     CATEGORY_UPDATE: "isimli kategori güncellendi",
+    //     CATEGORY_DELETE: "isimli kategori silindi",
+    //     ROLE_ADD: "isimli rol eklendi",
+    //     ROLE_UPDATE: "isimli rol güncellendi",
+    //     ROLE_DELETE: "isimli rol silindi",
+    //     USER_ADD: "isimli kullanıcı eklendi",
+    //     USER_UPDATE: "isimli kullanıcı güncellendi",
+    //     USER_DELETE: "isimli kullanıcı silindi"
+    // }
+}
